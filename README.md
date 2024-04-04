@@ -1,37 +1,38 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Next.js Multi-Step Form Tutorial
 
-## Getting Started
+![Build a Multi-Step Form in Next js](https://github.com/benorloff/nextjs-form-tutorial/assets/99829882/7180a2c9-d079-4266-8206-750b6ca161e2)
 
-First, run the development server:
+This is a repository for my article series on building a multi-step form in Next.js with Next.js 14 ([App Router](https://nextjs.org/docs/app)), [TailwindCSS](https://tailwindcss.com/), [Shadcn/ui](https://ui.shadcn.com/), [React Hook Form](https://react-hook-form.com/), [Zod](https://zod.dev/), [Zustand](https://docs.pmnd.rs/zustand/getting-started/introduction), and [usehooks-ts](https://usehooks-ts.com/).
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+[Series: Build a Multi-Step Form in Next.js](https://blog.benorloff.co/series/multi-step-form-nextjs)
+
+Features:
+
+- Form setup using React Hook Form
+- Form validation using Zod
+- Advanced validation methods .transform and .refine
+- Asynchronous form validation
+- HEAD request to validate URL field
+- Modern UI using TailwindCSS and Shadcn/ui
+- Debounced input value using usehooks-ts
+- Dynamic input UI with Lucide icons
+- State management using Zustand
+- Persist data to local storage with middleware
+
+### Cloning The Repository
+
+```shell
+git clone https://github.com/benorloff/nextjs-multi-step-form-tutorial.git
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Install packages
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```shell
+npm i
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+### Start The App
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
-# react-hook-form-debounce
+```shell
+npm run dev
+```
