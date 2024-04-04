@@ -1,7 +1,6 @@
 "use server"
 
 export const checkUrl = async (url: string): Promise<boolean> => {  
-    console.log("checkUrl invoked: ", url)  
     // Initialize as falsy
     let isWordPress: boolean = false;
 

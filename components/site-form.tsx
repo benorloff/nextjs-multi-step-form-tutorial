@@ -1,6 +1,9 @@
 "use client"
 
+import { useEffect, useState } from "react";
+
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useDebounceCallback } from "usehooks-ts";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -24,6 +27,13 @@ import {
     CardHeader, 
     CardTitle 
 } from "@/components/ui/card";
+
+import { 
+    AppWindow, 
+    CheckCircle, 
+    Loader2, 
+    XCircle 
+} from "lucide-react"
 
 const httpRegex = /^(http|https):/
 const completeUrlRegex = /^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_+.~#?&/=]*)$/
@@ -76,6 +86,12 @@ const FormSchema = z.object({
 
 export const SiteForm = () => {
 
+    const [urlValue, setUrlValue] = useState<string>("");
+    const [isTyping, setIsTyping] = useState<boolean>(false);
+    
+    // Debounce URL value with 500ms delay 
+    const debounced = useDebounceCallback(setUrlValue, 500);
+
     const form = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema),
         defaultValues: {
@@ -83,35 +99,59 @@ export const SiteForm = () => {
             url: "",
         },
         mode: "onChange"
-    })
+    });
 
-    const { 
-        getFieldState, 
+    const {
+        getFieldState,
         setValue,
         trigger,
         handleSubmit,
         clearErrors,
-        register,
         unregister,
         control,
         formState,
-        formState: { 
+        formState: {
             isValidating,
-        } 
+        }
     } = form;
 
     const handleChange = (
         e: React.ChangeEvent<HTMLInputElement>,
         fieldName: keyof z.infer<typeof FormSchema>
     ) => {
+        // Extract the value from the target element
         const { value } = e.target;
-        setValue(fieldName, value, { shouldDirty: true, shouldValidate: true });
-        console.log(`${fieldName}: `, value);
-    }; 
+        // Update the rendered value immediately, 
+        // but don't trigger validation yet
+        if (fieldName === "url") {
+            setValue(fieldName, value, { shouldDirty: true, shouldValidate: false });
+            setIsTyping(true);
+            debounced(value);
+        }
+        if (fieldName === "name") {
+            // Unregister the URL field to prevent validation
+            // while the user is typing the site name
+            unregister("url")
+            setValue(fieldName, value, { shouldDirty: true, shouldValidate: true });
+        }
+    };
+
+    // When the debounced urlValue changes, trigger validation
+    useEffect(() => {
+        // Don't trigger validation if the field is empty
+        // Instead, clear any existing field errors
+        urlValue ? trigger("url") : clearErrors("url");
+        // When the urlValue changes, we know the user has stopped typing
+        // due to debounce delay. Update state accordingly.
+        setIsTyping(false);
+    }, [urlValue])
 
     const onSubmit = (values: z.infer<typeof FormSchema>) => {
         console.log(values, "values")
-    }
+    };
+
+    const urlIsDirty = getFieldState("url", formState).isDirty;
+    const urlInvalid = getFieldState("url", formState).invalid;
 
     return (
         <Form {...form}>
@@ -144,10 +184,25 @@ export const SiteForm = () => {
                                     <FormItem>
                                         <FormLabel>URL</FormLabel>
                                         <FormControl>
-                                            <Input 
-                                                {...field} 
-                                                onChange={(e) => handleChange(e, field.name)}
-                                            />
+                                            <div className="relative flex items-center">
+                                                { ( !urlIsDirty && !isTyping ) && 
+                                                    <AppWindow size={16} className="absolute left-2" />
+                                                }
+                                                { ( isValidating || isTyping ) && 
+                                                    <Loader2 size={16} className="absolute left-2 animate-spin" />
+                                                }
+                                                { ( !isValidating && urlIsDirty && urlInvalid && !isTyping ) && 
+                                                    <XCircle size={16} className="absolute left-2 text-red-500"/>
+                                                }
+                                                { ( !isValidating && urlIsDirty && !urlInvalid && !isTyping ) && 
+                                                    <CheckCircle size={16} className="absolute left-2 text-green-500" />
+                                                }
+                                                <Input
+                                                    {...field}
+                                                    onChange={(e) => handleChange(e, field.name)}
+                                                    className="pl-8"
+                                                />
+                                            </div>
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
